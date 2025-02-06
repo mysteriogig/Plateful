@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet, ScrollView, ImageBackground } from 'react-native';
+import { View, Text, TouchableOpacity, Image, TextInput, StyleSheet, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
-import Animated from 'react-native-reanimated';
+import Animated, { Easing, withSpring, useSharedValue, withTiming, useAnimatedStyle } from 'react-native-reanimated';
 
 export default function SignUpScreen() {
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
 
+  // Shared value for animating the form container
+  const offsetY = useSharedValue(1000); // start position is below the screen
+
   useEffect(() => {
+    // Start animating the form when the component mounts
     setIsVisible(true);
+    offsetY.value = withSpring(0, { damping: 10, stiffness: 100 }); // move up to the desired position
   }, []);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: offsetY.value }],
+      opacity: withTiming(isVisible ? 1 : 0, { duration: 500 }),
+    };
+  });
 
   return (
     <ImageBackground
-      source={require('../assets/images/homepage_bg.jpg')}  // Background image
+      source={require('../assets/images/homepage_bg.jpg')} // Background image
       style={styles.container}
     >
       <SafeAreaView style={styles.safeArea}>
         {/* Back Button */}
         <View style={styles.backButtonContainer}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <ArrowLeftIcon size="20" color="black" />
+            <ArrowLeftIcon size={20} color="black" />
           </TouchableOpacity>
         </View>
 
@@ -33,29 +45,30 @@ export default function SignUpScreen() {
             style={styles.signupImage}
           />
         </View>
-      </SafeAreaView>
 
-      {/* Signup Form */}
-      <Animated.View style={[styles.formContainer, { opacity: isVisible ? 1 : 0 }]}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {/* Signup Form */}
+        <Animated.View style={[styles.formContainer, animatedStyle]}>
           <View style={styles.form}>
-            <Text style={styles.label}>Full Name</Text>
+            <Text style={styles.label}>Enter Name</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter Name"
+              placeholder="Name"
+              placeholderTextColor="#aaaaaa"
             />
             <Text style={styles.label}>Email Address</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter Email"
+              placeholder="Email"
+              placeholderTextColor="#aaaaaa"
             />
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>Enter Password</Text>
             <TextInput
               style={styles.input}
               secureTextEntry
-              placeholder="Enter Password"
+              placeholder="Password"
+              placeholderTextColor="#aaaaaa"
             />
-            <TouchableOpacity style={styles.signUpButton}>
+            <TouchableOpacity style={styles.signUpButton} onPress={() => navigation.navigate('Home')}>
               <Text style={styles.signUpButtonText}>Sign Up</Text>
             </TouchableOpacity>
           </View>
@@ -73,15 +86,14 @@ export default function SignUpScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Login Redirect */}
           <View style={styles.loginRedirectContainer}>
             <Text style={styles.redirectText}>Already have an account?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
               <Text style={styles.redirectLink}> Login</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </Animated.View>
+        </Animated.View>
+      </SafeAreaView>
     </ImageBackground>
   );
 }
@@ -89,7 +101,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    resizeMode: 'cover',  
+    resizeMode: 'cover',
   },
   safeArea: {
     flex: 1,
@@ -111,21 +123,20 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   signupImage: {
-      width: 220,
-      height: 300,
-      top: 20
+    width: 220,
+    height: 300,
+    marginTop: 20,
   },
   formContainer: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',  // Transparent white background for the form
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     paddingHorizontal: 32,
     paddingTop: 24,
-    marginTop: 20, // Adjusted to move content up
-  },
-  scrollViewContent: {
-    paddingBottom: 40, // Added padding to keep content visible at the bottom
+    marginTop: 25,
+    position: 'relative',
+    paddingBottom: 50, // Added bottom padding to prevent content from going off-screen
   },
   form: {
     marginBottom: 16,
@@ -138,8 +149,10 @@ const styles = StyleSheet.create({
   },
   input: {
     padding: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
     marginBottom: 16,
     fontSize: 16,
     color: '#4a4a4a',
@@ -161,17 +174,19 @@ const styles = StyleSheet.create({
     color: '#4a4a4a',
     textAlign: 'center',
     marginVertical: 24,
-    bottom:27
+    top:-30
   },
   socialContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    top:-40
   },
   socialButton: {
     padding: 8,
     backgroundColor: '#f5f5f5',
     borderRadius: 16,
-    bottom: 40
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   socialIcon: {
     width: 40,
@@ -181,6 +196,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 24,
+    marginBottom: 20,
+    top:-50 // Added bottom margin to give it space from the bottom
   },
   redirectText: {
     fontSize: 14,
