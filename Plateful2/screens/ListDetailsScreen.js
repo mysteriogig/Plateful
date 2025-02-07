@@ -1,14 +1,14 @@
-// In your ListDetailsScreen.js
-
 import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Animated, Linking } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated, Linking } from 'react-native';
+import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { CustomText } from '../components/CustomText'; // Import CustomText
 import { useNavigation } from '@react-navigation/native'; // for navigation
 
 const ListDetailsScreen = ({ route }) => {
   const { item } = route.params;
+  const navigation = useNavigation(); // Use navigation here for tab navigation
 
-  // Animation for the image
+  // Animation for the card
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -21,55 +21,45 @@ const ListDetailsScreen = ({ route }) => {
 
   const handleContact = () => {
     Linking.openURL(`tel:${item.contact}`);
+
   };
 
   const handleMessage = () => {
-    // Code to open messaging (you can replace this with a real message link if needed)
     alert('Message function will be added here!');
   };
 
-  const navigation = useNavigation(); // Use navigation here for tab navigation
-
   return (
     <View style={styles.container}>
-      {/* Image Section with Animation */}
-      <Animated.Image
-        source={{ uri: item.image }}
-        style={[styles.image, { opacity: fadeAnim }]}
-        resizeMode="cover"
-      />
-      
-      {/* Title using CustomText */}
-      <CustomText variant="body" style={styles.title}>{item.type}</CustomText>
+      <Animated.View style={{ opacity: fadeAnim }}>
+        <Card style={styles.card}>
+          <Card.Cover source={{ uri: item.image }} style={styles.image} />
+          <Card.Content>
+            <Title style={styles.title}>{item.type}</Title>
+            <Paragraph style={styles.details}>
+  💰 Price: {item.price === 0 ? 'Free' : `₹${item.price}`}
+</Paragraph>
 
-      {/* Place using CustomText */}
-      <CustomText variant="hint" style={styles.place}>Location: {item.place}</CustomText>
+            <Paragraph style={styles.details}>📦 Quantity: {item.quantity}</Paragraph>
+            <Paragraph style={styles.details}>👤 Listed by: {item.postedBy}</Paragraph>
+            <Paragraph style={styles.details}>📞 Contact: {item.contact}</Paragraph>
+            <Paragraph style={styles.details}>📅 Posted on: {new Date(item.postedAt).toLocaleDateString()}</Paragraph>
+            <Paragraph style={styles.details}>⏳ Expires on: {new Date(item.expiryDate).toLocaleDateString()}</Paragraph>
+          </Card.Content>
 
-      {/* Description Section */}
-      <View style={styles.detailsContainer}>
-        <CustomText variant="body" style={styles.details}>Price: {item.price === 0 ? 'Free' : `₹${item.price}`}</CustomText>
-        <CustomText variant="body" style={styles.details}>Quantity: {item.quantity}</CustomText>
-        <CustomText variant="body" style={styles.details}>Listed by: {item.postedBy}</CustomText>
-        <CustomText variant="body" style={styles.details}>Contact: {item.contact}</CustomText>
-        <CustomText variant="body" style={styles.details}>Posted on: {new Date(item.postedAt).toLocaleDateString()}</CustomText>
-        <CustomText variant="body" style={styles.details}>Expires on: {new Date(item.expiryDate).toLocaleDateString()}</CustomText>
-      </View>
+          {/* Action Buttons */}
+          <Card.Actions style={styles.actions}>
+            <Button mode="contained" onPress={handleContact} style={styles.button}>
+              Call Seller
+            </Button>
+            <Button mode="contained" onPress={handleMessage} style={[styles.button, { backgroundColor: '#2196F3' }]}>
+              Message Seller
+            </Button>
+          </Card.Actions>
+        </Card>
+      </Animated.View>
 
-      {/* Actions Section */}
-      <View style={styles.actions}>
-        <TouchableOpacity style={styles.button} onPress={handleContact}>
-          <CustomText variant="body" style={styles.buttonText}>Call Seller</CustomText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleMessage}>
-          <CustomText variant="body" style={styles.buttonText}>Message Seller</CustomText>
-        </TouchableOpacity>
-      </View>
-
-      {/* Navigate back to TabNavigator */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Home')} // Goes back to TabNavigator's Home tab
-        style={styles.backToHomeButton}
-      >
+      {/* Back to Home Button */}
+      <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backToHomeButton}>
         <CustomText variant="body" style={styles.buttonText}>Back to Home</CustomText>
       </TouchableOpacity>
     </View>
@@ -80,54 +70,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  card: {
+    borderRadius: 10,
+    overflow: 'hidden',
     backgroundColor: '#fff',
+    elevation: 5, // Shadow effect
   },
   image: {
-    width: '100%',
     height: 250,
-    borderRadius: 10,
-    marginBottom: 20,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12,
-  },
-  place: {
-    fontSize: 18,
-    color: '#555',
-    marginBottom: 10,
-  },
-  detailsContainer: {
-    marginBottom: 20,
+    marginBottom: 8,
   },
   details: {
     fontSize: 16,
-    color: '#777',
-    marginVertical: 4,
+    color: '#555',
+    marginVertical: 2,
   },
   actions: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
   button: {
-    backgroundColor: '#4CAF50',
-    padding: 12,
     borderRadius: 5,
-    width: '48%',
+    backgroundColor: '#4CAF50',
+  },
+  backToHomeButton: {
+    backgroundColor: '#FF6347',
+    padding: 12,
+    marginTop: 20,
+    borderRadius: 5,
     alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
-  },
-  backToHomeButton: {
-    backgroundColor: '#FF6347',
-    padding: 10,
-    marginTop: 20,
-    borderRadius: 5,
-    alignItems: 'center',
   },
 });
 
