@@ -1,19 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker'; // For dropdown picker
 
 const LendingScreen = () => {
   const [lendingListings, setLendingListings] = useState([]);
+  const [filteredListings, setFilteredListings] = useState([]);
+  const [filter, setFilter] = useState(null);
+  const [open, setOpen] = useState(false); // Control dropdown
+  const [selectedItem, setSelectedItem] = useState(null); // Selected filter (only one at a time)
   const navigation = useNavigation();
 
+  // Fetch mock data
   useEffect(() => {
     const fetchFoodData = async () => {
-      const response = require('../foodListing.json');
-      const filteredData = response.filter(item => item.category === 'lending');
-      setLendingListings(filteredData);
+      const response = require('../foodListing.json'); // Mocked JSON file
+      setLendingListings(response);
+      setFilteredListings(response);
     };
     fetchFoodData();
   }, []);
+
+  // Apply filter whenever `selectedItem` changes
+  useEffect(() => {
+    if (selectedItem) {
+      applyFilter();
+    }
+  }, [selectedItem]);
+
+  // Filter logic
+  const applyFilter = () => {
+    let filteredData = lendingListings;
+
+    if (selectedItem === 'Perishable') {
+      filteredData = filteredData.filter(item => item.perishable === true);
+    }
+
+    if (selectedItem === 'Non-Perishable') {
+      filteredData = filteredData.filter(item => item.perishable === false);
+    }
+
+    if (selectedItem === 'Free') {
+      filteredData = filteredData.filter(item => item.free === true); // Updated to use the 'free' field
+    }
+
+    if (selectedItem === 'Time') {
+      filteredData = [...filteredData].sort((a, b) => new Date(a.time) - new Date(b.time));
+    }
+
+    if (selectedItem === 'Distance') {
+      filteredData = [...filteredData].sort((a, b) => a.distance - b.distance);
+    }
+
+    setFilteredListings(filteredData);
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -26,7 +66,7 @@ const LendingScreen = () => {
           <Text style={styles.itemPlace}>{item.place}</Text>
         </View>
         <View style={styles.rightContainer}>
-          <Text style={styles.itemPrice}>{item.price === 0 ? 'Free' : `₹${item.price}`}</Text>
+          <Text style={styles.itemPrice}>{item.free ? 'Free' : `₹${item.price}`}</Text>
           <Text style={styles.lineIcon}>{'>'}</Text>
         </View>
       </View>
@@ -35,11 +75,31 @@ const LendingScreen = () => {
 
   return (
     <View style={styles.listingContainer}>
-      {lendingListings.length === 0 ? (
+      <View style={styles.filterContainer}>
+        <DropDownPicker
+          open={open}
+          value={selectedItem}
+          items={[
+            { label: 'Perishable', value: 'Perishable' },
+            { label: 'Non-Perishable', value: 'Non-Perishable' },
+            { label: 'Free', value: 'Free' },
+            { label: 'Time', value: 'Time' },
+            { label: 'Distance', value: 'Distance' },
+          ]}
+          setOpen={setOpen}
+          setValue={setSelectedItem} // Directly set selectedItem
+          placeholder="Select Filter"
+          containerStyle={styles.dropdownContainer}
+          dropDownStyle={styles.dropdownStyle}
+          multiple={false} // Disable multiple selections
+        />
+      </View>
+
+      {filteredListings.length === 0 ? (
         <Text style={styles.noListingsText}>No listings available</Text>
       ) : (
         <FlatList
-          data={lendingListings}
+          data={filteredListings}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
         />
@@ -52,7 +112,20 @@ const styles = StyleSheet.create({
   listingContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    paddingTop: 20,
+    paddingTop: 10,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 5,
+    marginRight: 16,
+  },
+  dropdownContainer: {
+    height: 200,
+    width: '100%',
+  },
+  dropdownStyle: {
+    backgroundColor: '#f0f0f0',
   },
   noListingsText: {
     fontSize: 18,

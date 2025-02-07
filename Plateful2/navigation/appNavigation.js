@@ -23,13 +23,15 @@ import AccountScreen from '../screens/AccountScreen';
 import ListDetailsScreen from '../screens/ListDetailsScreen';
 import MapScreen from '../screens/MapScreen';
 import plus from '../assets/images/plus.png';
-
-
+import GetLendDetails from '../screens/getdetails/GetLendDetails'; 
+import GetDonateDetails from '../screens/getdetails/GetDonateDetails';
+import GetPostDetails from '../screens/getdetails/GetPostDetails';
+import GetWantedDetails from '../screens/getdetails/GetWantedDetails';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function TabNavigator({ navigation }) {
-  const [modalVisible, setModalVisible] = useState(false); // Modal state
+  const [modalVisible, setModalVisible] = useState(false);
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
 
   const getWidth = () => {
@@ -96,7 +98,7 @@ function TabNavigator({ navigation }) {
         />
         <Tab.Screen
           name="Add"
-          component={() => null} // No screen, just modal behavior
+          component={() => null}
           options={{
             tabBarIcon: () => (
               <View
@@ -116,8 +118,8 @@ function TabNavigator({ navigation }) {
           }}
           listeners={{
             tabPress: (e) => {
-              e.preventDefault(); // Prevent default tab navigation
-              setModalVisible(true); // Open the modal
+              e.preventDefault();
+              setModalVisible(true);
             },
           }}
         />
@@ -160,25 +162,6 @@ function TabNavigator({ navigation }) {
           }}
         />
       </Tab.Navigator>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Map')} // Navigate to MapScreen
-        style={{
-          position: 'absolute',
-          right: 20,
-          bottom: 90,
-          backgroundColor: 'white',
-          width: 60,
-          height: 60,
-          borderRadius: 30,
-          justifyContent: 'center',
-          alignItems: 'center',
-          elevation: 5,
-        }}
-      >
-        <FontAwesome5 name="map-marked-alt" size={24} color="red" />
-      </TouchableOpacity>
-
-      {/* Modal for Add Button */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -198,55 +181,44 @@ function TabNavigator({ navigation }) {
               <FontAwesome5 name="hand-holding-heart" size={24} color="#007BFF" />
               <Text style={styles.optionText}>Lend</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.option}
-              onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('WantedScreen');
-              }}
-            >
-              <FontAwesome5 name="search" size={24} color="#28A745" />
-              <Text style={styles.optionText}>Wanted</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.option}
-              onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('DonateScreen');
-              }}
-            >
-              <FontAwesome5 name="heart" size={24} color="#DC3545" />
-              <Text style={styles.optionText}>Donate</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.option}
-              onPress={() => {
-                setModalVisible(false);
-                navigation.navigate('AddPostScreen');
-              }}
-            >
-              <FontAwesome5 name="plus-circle" size={24} color="#FFC107" />
-              <Text style={styles.optionText}>Add a Post</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+            {/* Donate Option */}
+      <TouchableOpacity
+        style={styles.option}
+        onPress={() => {
+          setModalVisible(false);
+          navigation.navigate('DonateScreen'); // Replace with actual navigation name
+        }}
+      >
+        <FontAwesome5 name="donate" size={24} color="#007BFF" />
+        <Text style={styles.optionText}>Donate</Text>
+      </TouchableOpacity>
+
+      {/* Post Option */}
+      <TouchableOpacity
+        style={styles.option}
+        onPress={() => {
+          setModalVisible(false);
+          navigation.navigate('PostScreen'); // Replace with actual navigation name
+        }}
+      >
+        <FontAwesome5 name="edit" size={24} color="#007BFF" />
+        <Text style={styles.optionText}>Post</Text>
+      </TouchableOpacity>
+
+      {/* Wanted Option */}
+      <TouchableOpacity
+        style={styles.option}
+        onPress={() => {
+          setModalVisible(false);
+          navigation.navigate('WantedScreen'); // Replace with actual navigation name
+        }}
+      >
+        <FontAwesome5 name="search" size={24} color="#007BFF" />
+        <Text style={styles.optionText}>Wanted</Text>
+      </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
-      <Animated.View
-        style={{
-          width: getWidth() - 30,
-          height: 2,
-          backgroundColor: 'red',
-          position: 'absolute',
-          bottom: 63,
-          left: 25,
-          borderRadius: 20,
-          transform: [{ translateX: tabOffsetValue }],
-        }}
-      />
     </>
   );
 }
@@ -255,14 +227,18 @@ export default function AppNavigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Welcome">
-        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
-        <Stack.Screen name="ListDetails" component={ListDetailsScreen} />
-        <Stack.Screen name="Map" component={MapScreen} options={{ headerTitle: 'Map View' }} />
+  <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
+  <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+  <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+  <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+  <Stack.Screen name="ListDetails" component={ListDetailsScreen} />
+  <Stack.Screen name="Map" component={MapScreen} options={{ headerTitle: 'Map View' }} />
+  <Stack.Screen name="LendScreen" component={GetLendDetails} options={{ title: 'Lend' }} />
+  <Stack.Screen name="DonateScreen" component={GetDonateDetails} options={{ title: 'Donate' }} />
+  <Stack.Screen name="PostScreen" component={GetPostDetails} options={{ title: 'Post' }} />
+  <Stack.Screen name="WantedScreen" component={GetWantedDetails} options={{ title: 'Wanted' }} />
+</Stack.Navigator>
 
-      </Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -296,16 +272,5 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: '#333',
-  },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: '#DC3545',
-    padding: 10,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
