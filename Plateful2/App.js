@@ -1,11 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import AppNavigation from './navigation/appNavigation';
-
-
-
+import React from 'react';
+import { ThemeProvider } from 'styled-components'; 
+import AppNavigation from './navigation/appNavigation'; 
+import { theme } from '../Plateful2/theme/index'; 
 export default function App() {
   return (
-    <AppNavigation />
+    <ThemeProvider theme={theme}>  
+      <AppNavigation />  
+    </ThemeProvider>
   );
 }
