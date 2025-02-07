@@ -117,8 +117,9 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: 5,
+    marginBottom:-125,
     marginRight: 16,
+    marginLeft:10
   },
   dropdownContainer: {
     height: 200,

@@ -86,11 +86,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   selectedTabText: {
-    color: '#ff6347',
+    color: '#FF0000',
   },
   tabIndicator: {
     height: 2,
-    backgroundColor: '#ff6347',
+    backgroundColor: '#FF0000',
     position: 'absolute',
     top: 40,
     left: 0,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   tabDivider: {
     width: 1,
-    backgroundColor: '#ddd',
+    backgroundColor: '#FF0000',
     height: '100%',
   },
 });

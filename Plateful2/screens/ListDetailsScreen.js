@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Linking } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
-import { CustomText } from '../components/CustomText'; // Import CustomText
+import { View, StyleSheet, TouchableOpacity, Animated, Text, Linking } from 'react-native';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native'; // for navigation
 
 const ListDetailsScreen = ({ route }) => {
@@ -21,7 +20,6 @@ const ListDetailsScreen = ({ route }) => {
 
   const handleContact = () => {
     Linking.openURL(`tel:${item.contact}`);
-
   };
 
   const handleMessage = () => {
@@ -36,31 +34,34 @@ const ListDetailsScreen = ({ route }) => {
           <Card.Content>
             <Title style={styles.title}>{item.type}</Title>
             <Paragraph style={styles.details}>
-  💰 Price: {item.price === 0 ? 'Free' : `₹${item.price}`}
-</Paragraph>
-
+              💰 Price: {item.price === 0 ? 'Free' : `₹${item.price}`}
+            </Paragraph>
             <Paragraph style={styles.details}>📦 Quantity: {item.quantity}</Paragraph>
             <Paragraph style={styles.details}>👤 Listed by: {item.postedBy}</Paragraph>
             <Paragraph style={styles.details}>📞 Contact: {item.contact}</Paragraph>
-            <Paragraph style={styles.details}>📅 Posted on: {new Date(item.postedAt).toLocaleDateString()}</Paragraph>
-            <Paragraph style={styles.details}>⏳ Expires on: {new Date(item.expiryDate).toLocaleDateString()}</Paragraph>
+            <Paragraph style={styles.details}>
+              📅 Posted on: {new Date(item.postedAt).toLocaleDateString()}
+            </Paragraph>
+            <Paragraph style={styles.details}>
+              ⏳ Expires on: {new Date(item.expiryDate).toLocaleDateString()}
+            </Paragraph>
           </Card.Content>
 
           {/* Action Buttons */}
           <Card.Actions style={styles.actions}>
-            <Button mode="contained" onPress={handleContact} style={styles.button}>
-              Call Seller
-            </Button>
-            <Button mode="contained" onPress={handleMessage} style={[styles.button, { backgroundColor: '#2196F3' }]}>
-              Message Seller
-            </Button>
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#4CAF50' }]} onPress={handleContact}>
+              <Text style={styles.buttonText}>Call Seller</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#2196F3' }]} onPress={handleMessage}>
+              <Text style={styles.buttonText}>Message Seller</Text>
+            </TouchableOpacity>
           </Card.Actions>
         </Card>
       </Animated.View>
 
       {/* Back to Home Button */}
       <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backToHomeButton}>
-        <CustomText variant="body" style={styles.buttonText}>Back to Home</CustomText>
+        <Text style={styles.backButtonText}>Back to Home</Text>
       </TouchableOpacity>
     </View>
   );
@@ -93,13 +94,22 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   actions: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     paddingBottom: 10,
   },
   button: {
+    flex: 1,
+    marginHorizontal: 5,
+    paddingVertical: 12,
     borderRadius: 5,
-    backgroundColor: '#4CAF50',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   backToHomeButton: {
     backgroundColor: '#FF6347',
@@ -108,7 +118,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
   },
-  buttonText: {
+  backButtonText: {
     color: '#fff',
     fontSize: 16,
   },
