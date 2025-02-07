@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, Dimensions, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, TouchableOpacity, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -11,29 +11,31 @@ import CommunityScreen from '../screens/CommunityScreen';
 import AddScreen from '../screens/AddScreen';
 import MessagesScreen from '../screens/MessagesScreen';
 import AccountScreen from '../screens/AccountScreen';
+import ListDetailsScreen from '../screens/ListDetailsScreen';
+import MapScreen from '../screens/MapScreen'
 import plus from '../assets/images/plus.png';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function TabNavigator() {
+function TabNavigator({ navigation }) {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
 
   const getWidth = () => {
     let width = Dimensions.get('window').width;
-    return (width - 20) / 5; // Adjust for 5 tabs
+    return (width - 20) / 5;
   };
 
   return (
     <>
       <Tab.Navigator
-        screenOptions={{
-          showLabel: false,
+        screenOptions={({ route }) => ({
+          tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: 'white',
             position: 'absolute',
-            bottom: 40,
+            bottom: 10,
             marginHorizontal: 10,
             height: 65,
             borderRadius: 10,
@@ -42,21 +44,16 @@ function TabNavigator() {
             shadowOffset: { width: 10, height: 10 },
             paddingHorizontal: 0,
           },
-        }}
+        })}
       >
         <Tab.Screen
-          name="HomeTab" // Renamed from "Home" to "HomeTab"
+          name="HomeTab"
           component={HomeScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ position: 'absolute', top: 20 }}>
-                <FontAwesome5 name="home" size={20} color={focused ? 'red' : 'gray'} />
+              <View style={{ position: 'absolute', top: 15 }}>
+                <FontAwesome5 name="home" size={25} color={focused ? 'red' : 'gray'} />
               </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ fontSize: 11, position: 'absolute', bottom: 10 }}>
-                Home
-              </Text>
             ),
           }}
           listeners={{
@@ -74,14 +71,9 @@ function TabNavigator() {
           component={CommunityScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ position: 'absolute', top: 20 }}>
-                <FontAwesome5 name="users" size={20} color={focused ? 'red' : 'gray'} />
+              <View style={{ position: 'absolute', top: 15 }}>
+                <FontAwesome5 name="users" size={25} color={focused ? 'red' : 'gray'} />
               </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ fontSize: 11, position: 'absolute', bottom: 10 }}>
-                Community
-              </Text>
             ),
           }}
           listeners={{
@@ -98,31 +90,30 @@ function TabNavigator() {
           name="Add"
           component={AddScreen}
           options={{
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: () => (
               <View
                 style={{
-                  width: 55,
-                  height: 55,
+                  width: 73,
+                  height: 68,
                   backgroundColor: 'red',
                   borderRadius: 30,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  marginBottom: Platform.OS === 'android' ? 50 : 30,
+                  top: 12,
                 }}
               >
                 <Image source={plus} style={{ width: 22, height: 22, tintColor: 'white' }} />
               </View>
             ),
-            tabBarLabel: '', // Use an empty string instead of null
           }}
           listeners={({ navigation }) => ({
             tabPress: (e) => {
-              e.preventDefault(); // Prevent the default behavior
+              e.preventDefault();
               Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 2, // Adjust the offset for the "Add" tab
+                toValue: getWidth() * 2,
                 useNativeDriver: true,
               }).start();
-              navigation.navigate('Add'); // Navigate to the "Add" screen
+              navigation.navigate('Add');
             },
           })}
         />
@@ -132,14 +123,9 @@ function TabNavigator() {
           component={MessagesScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ position: 'absolute', top: 20 }}>
-                <FontAwesome5 name="comment-alt" size={20} color={focused ? 'red' : 'gray'} />
+              <View style={{ position: 'absolute', top: 15 }}>
+                <FontAwesome5 name="comment-alt" size={25} color={focused ? 'red' : 'gray'} />
               </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ fontSize: 11, position: 'absolute', bottom: 9 }}>
-                Messages
-              </Text>
             ),
           }}
           listeners={{
@@ -157,14 +143,9 @@ function TabNavigator() {
           component={AccountScreen}
           options={{
             tabBarIcon: ({ focused }) => (
-              <View style={{ position: 'absolute', top: 20 }}>
-                <FontAwesome5 name="user-circle" size={20} color={focused ? 'red' : 'gray'} />
+              <View style={{ position: 'absolute', top: 15 }}>
+                <FontAwesome5 name="user-circle" size={25} color={focused ? 'red' : 'gray'} />
               </View>
-            ),
-            tabBarLabel: ({ focused }) => (
-              <Text style={{ fontSize: 11, position: 'absolute', bottom: 9 }}>
-                Account
-              </Text>
             ),
           }}
           listeners={{
@@ -178,13 +159,32 @@ function TabNavigator() {
         />
       </Tab.Navigator>
 
+    
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Map')}
+        style={{
+          position: 'absolute',
+          right: 20,
+          bottom: 90,
+          backgroundColor: 'white',
+          width: 60,
+          height: 60,
+          borderRadius: 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 5,
+        }}
+      >
+        <FontAwesome5 name="map-marked-alt" size={24} color="red" />
+      </TouchableOpacity>
+
       <Animated.View
         style={{
           width: getWidth() - 30,
           height: 2,
           backgroundColor: 'red',
           position: 'absolute',
-          bottom: 98,
+          bottom: 63,
           left: 25,
           borderRadius: 20,
           transform: [{ translateX: tabOffsetValue }],
@@ -194,7 +194,6 @@ function TabNavigator() {
   );
 }
 
-// Main Navigation
 export default function AppNavigation() {
   return (
     <NavigationContainer>
@@ -203,6 +202,16 @@ export default function AppNavigation() {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="ListDetails" 
+          component={ListDetailsScreen} 
+          options={{ headerTitle: 'Food Item Details' }} 
+        />
+        <Stack.Screen 
+          name="Map" 
+          component={MapScreen} 
+          options={{ headerTitle: 'Map View' }} 
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

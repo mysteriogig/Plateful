@@ -1,0 +1,39 @@
+[
+    {
+      "id": 1,
+      "type": "Vegetables - Fresh Tomatoes",
+      "place": "Central Market",
+      "price": 200,
+      "category": "lending",
+      "latitude": 37.78925,
+      "longitude": -122.4314
+    },
+    {
+      "id": 2,
+      "type": "Rice - Basmati",
+      "place": "North Street",
+      "price": 0,
+      "category": "wanted",
+      "latitude": 37.79025,
+      "longitude": -122.4321
+    },
+    {
+      "id": 3,
+      "type": "Fruits - Apples",
+      "place": "East Plaza",
+      "price": 150,
+      "category": "lending",
+      "latitude": 37.78875,
+      "longitude": -122.4304
+    },
+    {
+      "id": 4,
+      "type": "Spices - Cinnamon Powder",
+      "place": "West Avenue",
+      "price": 300,
+      "category": "wanted",
+      "latitude": 37.78725,
+      "longitude": -122.4344
+    }
+  ]
+  
